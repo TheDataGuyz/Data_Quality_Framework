@@ -1,60 +1,57 @@
-# Data_Quality_Framework
-Creating a data quality assessment framework document involves defining the structure, rules, and processes for evaluating the quality of data within an organization. Below is a template for such a document, including tables for rules, results, and error logs, as well as a description of a dashboard for presenting the data quality assessment findings.
+# Data Quality Automation Framework Documentation
 
-### Data Quality Assessment Framework Document
+## 1. Introduction
 
-#### 1. Introduction
-Provide an overview of the purpose and scope of the data quality assessment framework.
+The Data Quality Automation Framework is designed to ensure the quality and integrity of data within our organization's databases. It provides a systematic approach to defining, executing, and monitoring data quality rules across various data sources.
 
-#### 2. Objectives
-Define the objectives of the data quality assessment framework, including what aspects of data quality it aims to evaluate and improve.
+## 2. Components
 
-#### 3. Components of the Framework
+### 2.1. DQ_RULE Table
 
-##### 3.1. Rule Table
-Define the rules or criteria used to assess data quality. These rules should be specific, measurable, achievable, relevant, and time-bound (SMART).
+The `DQ_RULE` table stores metadata about data quality rules defined within the framework. It includes information such as the rule category, severity, description, validation script, and timestamps for creation and updates.
 
-| Rule ID | Rule Description                                    |
-|---------|-----------------------------------------------------|
-| R001    | Data completeness: Ensure all required fields are populated. |
-| R002    | Data accuracy: Verify data accuracy against trusted sources. |
-| R003    | Data consistency: Check for consistency across different datasets. |
-| R004    | Data timeliness: Assess data timeliness based on expected update frequency. |
+### 2.2. DQ_RESULT Table
 
-##### 3.2. Result Table
-Document the results of the data quality assessment, including the evaluation of each rule.
+The `DQ_RESULT` table records the results of data quality checks performed by the framework. It captures metrics such as the count of passed and failed checks, percentage of failed checks, and audit timestamps.
 
-| Rule ID | Dataset Name | Result |
-|---------|--------------|--------|
-| R001    | Sales Data   | Passed |
-| R002    | Customer Data| Failed |
-| R003    | Inventory Data| Passed |
-| R004    | Website Traffic Data| Passed |
+### 2.3. DQ_ERROR Table
 
-##### 3.3. Error Log Table
-Record any errors or issues encountered during the data quality assessment.
+The `DQ_ERROR` table logs errors encountered during data quality checks. It provides details such as the affected rule, job, audit, subject area, database, schema, table, column, column value, primary key value pair, result, severity, description, audit timestamp, and PII flag.
 
-| Error ID | Dataset Name | Error Description | Resolution |
-|----------|--------------|-------------------|------------|
-| E001     | Customer Data| Missing values in 'Email' field | Update script to handle missing values |
-| E002     | Sales Data   | Inconsistent date format | Standardize date format |
+## 3. Workflow
 
-#### 4. Data Quality Dashboard
-Design a dashboard to visualize the data quality assessment results and trends. Include graphs, charts, and summary statistics to provide stakeholders with actionable insights into data quality.
+1. **Rule Definition**: Data quality rules are defined and stored in the `DQ_RULE` table. Each rule specifies criteria for validating data integrity.
 
-The dashboard should include:
+2. **Rule Execution**: The framework executes data quality rules against specified data sources.
 
-- Overall data quality score
-- Trends over time (e.g., improvement or degradation of data quality)
-- Breakdown of data quality by rule or criterion
-- Top data quality issues or errors
-- Recommendations for improving data quality
+3. **Result Logging**: Results of rule execution are logged in the `DQ_RESULT` table, including metrics such as pass/fail counts and timestamps.
 
-#### 5. Conclusion
-Summarize the key findings of the data quality assessment and outline any actions to be taken to address data quality issues identified.
+4. **Error Handling**: Any errors encountered during rule execution are logged in the `DQ_ERROR` table for further investigation.
 
-#### 6. Appendices
-Include any additional documentation or references related to the data quality assessment framework.
+## 4. Usage
 
-### Summary
-A data quality assessment framework document provides a structured approach to evaluating and improving the quality of data within an organization. By defining rules, documenting assessment results, and presenting findings through a dashboard, stakeholders can gain valuable insights into data quality and take proactive measures to address any issues identified.
+### 4.1. Defining Data Quality Rules
+
+- Use the `DQ_RULE` table to define data quality rules.
+- Populate relevant columns such as `SUBJECT_AREA`, `DATABASE_NAME`, `SCHEMA_NAME`, `TABLE_NAME`, `COLUMN_NAME`, `PRIMARY_KEY_COLUMN`, `RULE_CATEGORY`, `RULE_THRESHOLD`, `RULE_SEVERITY`, `RULE_DESCRIPTION`, and `RULE_VALIDATION_SCRIPT`.
+- Ensure accurate and descriptive documentation for each rule.
+
+### 4.2. Executing Data Quality Checks
+
+- Implement processes to trigger the execution of data quality checks against specified data sources.
+- Monitor the execution of checks and review results logged in the `DQ_RESULT` table.
+
+### 4.3. Handling Errors
+
+- Monitor the `DQ_ERROR` table for any errors encountered during data quality checks.
+- Investigate and resolve errors promptly to maintain data integrity.
+
+## 5. Maintenance
+
+- Regularly review and update data quality rules based on evolving data requirements and business needs.
+- Monitor and optimize the performance of data quality checks to ensure timely execution.
+- Periodically review and clean up historical data in the `DQ_RESULT` and `DQ_ERROR` tables to manage storage resources.
+
+## 6. Conclusion
+
+The Data Quality Automation Framework plays a critical role in maintaining the quality and integrity of our organization's data. By defining, executing, and monitoring data quality rules, we ensure that our data remains accurate, consistent, and reliable for decision-making processes.
