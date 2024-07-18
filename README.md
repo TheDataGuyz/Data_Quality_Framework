@@ -51,7 +51,7 @@ The Data Quality Dashboard provides a visual representation of data quality metr
 
 - Regularly review and update data quality rules based on evolving data requirements and business needs.
 - Monitor and optimize the performance of data quality checks to ensure timely execution.
-- Periodically review and clean up historical data in the `DQ_RESULT` and `DQ_ERROR` tables to manage storage resources.
+- Periodically review and clean up historical data in the `DQ_FAILED_RECORDS` tables to manage storage resources.
 
 ## 5. Conclusion
 
