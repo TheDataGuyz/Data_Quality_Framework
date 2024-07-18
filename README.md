@@ -8,17 +8,29 @@ The Data Quality Automation Framework is designed to ensure the quality and inte
 
 ### 2.1. DQ_RULE Table
 
-The `DQ_RULE` table stores metadata about data quality rules defined within the framework. It includes information such as the rule category, severity, description, validation script, and timestamps for creation and updates.
+The `DQ_RULE` table stores metadata about data quality rules defined within the framework, that needs to be applied to the data. It includes information such as the rule category, severity, description, validation script, and timestamps for creation and updates.
 
 ### 2.2. DQ_RESULT Table
 
-The `DQ_RESULT` table records the results of data quality checks performed by the framework. It captures metrics such as the count of passed and failed checks, percentage of failed checks, and audit timestamps.
+The `DQ_RESULT` table records the results of data quality checks performed by the framework. It captures metrics such as the count of passed and failed checks, percentage of failed checks, and timestamps.
 
-### 2.3. DQ_ERROR Table
+### 2.3. DQ_FAILED_RECORDS Table
 
-The `DQ_ERROR` table logs errors encountered during data quality checks. It provides details such as the affected rule, job, audit, subject area, database, schema, table, column, column value, primary key value pair, result, severity, description, audit timestamp, and PII flag.
+The `DQ_FAILED_RECORDS` table logs errors encountered during data quality checks. It provides details such as the affected rule, subject area, database, schema, table, column, column value, primary key and key values, result, description, audit timestamp, and PII flag.
 
-### 2.4. Data Quality Dashboard
+### 2.4. DQ_RUN_STATUS Table
+
+The `DQ_RUN_STATUS` table keeps track of the overall status of the data quality rule executions.
+
+### 2.5. DQ_ERROR_HANDLE_LOG Table
+
+The `DQ_ERROR_HANDLE_LOG` table logs any errors with the arrow rules ideas encountered during the data quality execution process.
+
+### 2.6. DQ_CHECK()
+
+The stored procedure is designed to automate the execution of data qualit rules check defined in the DQ_RULE table. It validates the data according to the rules.
+
+### 2.7. Data Quality Dashboard
 
 The Data Quality Dashboard provides a visual representation of data quality metrics and trends. It offers insights into the overall health of data quality across different dimensions such as rule adherence, error rates, and compliance levels.
 
@@ -34,35 +46,13 @@ The Data Quality Dashboard provides a visual representation of data quality metr
 
 5. **Dashboard Visualization**: Data quality metrics and trends are visualized in the Data Quality Dashboard to provide stakeholders with actionable insights.
 
-## 4. Usage
 
-### 4.1. Defining Data Quality Rules
-
-- Use the `DQ_RULE` table to define data quality rules.
-- Populate relevant columns such as `SUBJECT_AREA`, `DATABASE_NAME`, `SCHEMA_NAME`, `TABLE_NAME`, `COLUMN_NAME`, `PRIMARY_KEY_COLUMN`, `RULE_CATEGORY`, `RULE_THRESHOLD`, `RULE_SEVERITY`, `RULE_DESCRIPTION`, and `RULE_VALIDATION_SCRIPT`.
-- Ensure accurate and descriptive documentation for each rule.
-
-### 4.2. Executing Data Quality Checks
-
-- Implement processes to trigger the execution of data quality checks against specified data sources.
-- Monitor the execution of checks and review results logged in the `DQ_RESULT` table.
-
-### 4.3. Handling Errors
-
-- Monitor the `DQ_ERROR` table for any errors encountered during data quality checks.
-- Investigate and resolve errors promptly to maintain data integrity.
-
-### 4.4. Interpreting Dashboard Metrics
-
-- Use the Data Quality Dashboard to monitor key data quality metrics and trends.
-- Identify areas of improvement and take proactive measures to address data quality issues.
-
-## 5. Maintenance
+## 4. Maintenance
 
 - Regularly review and update data quality rules based on evolving data requirements and business needs.
 - Monitor and optimize the performance of data quality checks to ensure timely execution.
 - Periodically review and clean up historical data in the `DQ_RESULT` and `DQ_ERROR` tables to manage storage resources.
 
-## 6. Conclusion
+## 5. Conclusion
 
 The Data Quality Automation Framework, coupled with the Data Quality Dashboard, plays a critical role in maintaining the quality and integrity of our organization's data. By defining, executing, and monitoring data quality rules and metrics, we ensure that our data remains accurate, consistent, and reliable for decision-making processes.
