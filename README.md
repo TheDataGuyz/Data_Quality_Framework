@@ -30,11 +30,11 @@ The `DQ_ERROR_HANDLE_LOG` table logs any errors with the arrow rules ideas encou
 
 The stored procedure is designed to automate the execution of data qualit rules check defined in the DQ_RULE table. It validates the data according to the rules.
 
+<img width="800px" src="DQ_CHECK_flowchart.png" alt="flow chart png" />
+
 ### 2.7. Data Quality Dashboard
 
 The Data Quality Dashboard provides a visual representation of data quality metrics and trends. It offers insights into the overall health of data quality across different dimensions such as rule adherence, error rates, and compliance levels.
-
-<img width="800px" src="DQ_CHECK_flowchart.png" alt="flow chart png" />
 
 
 ## 3. Workflow
