@@ -34,7 +34,7 @@ The stored procedure is designed to automate the execution of data qualit rules 
 
 The Data Quality Dashboard provides a visual representation of data quality metrics and trends. It offers insights into the overall health of data quality across different dimensions such as rule adherence, error rates, and compliance levels.
 
-<img width="30px" src="DQ_CHECK_flowchart.png" alt="flow chart png" />
+<img width="800px" src="DQ_CHECK_flowchart.png" alt="flow chart png" />
 
 
 ## 3. Workflow
