@@ -37,25 +37,12 @@ The stored procedure is designed to automate the execution of data qualit rules 
 The Data Quality Dashboard provides a visual representation of data quality metrics and trends. It offers insights into the overall health of data quality across different dimensions such as rule adherence, error rates, and compliance levels.
 
 
-## 3. Workflow
-
-1. **Rule Definition**: Data quality rules are defined and stored in the `DQ_RULE` table. Each rule specifies criteria for validating data integrity.
-
-2. **Rule Execution**: The framework executes data quality rules against specified data sources.
-
-3. **Result Logging**: Results of rule execution are logged in the `DQ_RESULT` table, including metrics such as pass/fail counts and timestamps.
-
-4. **Error Handling**: Any errors encountered during rule execution are logged in the `DQ_ERROR` table for further investigation.
-
-5. **Dashboard Visualization**: Data quality metrics and trends are visualized in the Data Quality Dashboard to provide stakeholders with actionable insights.
-
-
-## 4. Maintenance
+## 3. Maintenance
 
 - Regularly review and update data quality rules based on evolving data requirements and business needs.
 - Monitor and optimize the performance of data quality checks to ensure timely execution.
 - Periodically review and clean up historical data in the `DQ_FAILED_RECORDS` tables to manage storage resources.
 
-## 5. Conclusion
+## 4. Conclusion
 
 The Data Quality Automation Framework, coupled with the Data Quality Dashboard, plays a critical role in maintaining the quality and integrity of our organization's data. By defining, executing, and monitoring data quality rules and metrics, we ensure that our data remains accurate, consistent, and reliable for decision-making processes.
