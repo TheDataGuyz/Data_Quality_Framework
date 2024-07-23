@@ -56,7 +56,7 @@ The table is designed to be the core component of our data quality automation fr
 |------------------------|---------------------------------------------------------------------------------------------------------------|-------------------------------------|
 | DQ_RULE_ID             | Unique identifier of DQ rule which is automatically (sequentially) generated.                                    | Primary Key                         |
 | SUBJECT_AREA           | Subject area                                                                                                    |                                     |
-| DATABASE_NAME          | Database name                                                                                                   | Claims, Policy, etc.                |
+| DATABASE_NAME          | Database name                                                                                                   |                 |
 | SCHEMA_NAME            | Schema name                                                                                                     |                                     |
 | TABLE_NAME             | Table name where the data rule is implemented                                                                   |                                     |
 | COLUMN_NAME            | Column name/names where the data rule is implemented                                                            |                                     |
@@ -89,7 +89,7 @@ This table captures the outcomes of various data quality checks. It helps track 
 | DQ_RESULT_ID        | Unique identifier of the DQ result which is automatically (sequentially) generated                              | Primary Key                           |
 | DQ_RULE_ID          | Unique identifier of the DQ rule                                                                               | Foreign Key                           |
 | DQ_JOB_ID           | Unique identifier, an automated sequential number is generated every time the DQ_CHECK procedure is run        |                                       |
-| SUBJECT_AREA        | Subject area                                                                                                   | Claims, Policy, etc.                  |
+| SUBJECT_AREA        | Subject area                                                                                                   |                   |
 | DATABASE_NAME       | Database name                                                                                                  |                                       |
 | SCHEMA_NAME         | Schema name                                                                                                    |                                       |
 | TABLE_NAME          | Table name where the data rule is implemented                                                                  |                                       |
@@ -123,7 +123,7 @@ This table captures the records that do not meet the defined data quality rules.
 | DQ_AUDIT_ID        | Unique identifier which is automatically generated.                                                            | Primary Key               |
 | DQ_RULE_ID         | Unique identifier of the DQ rule                                                                               | Foreign Key               |
 | DQ_JOB_ID          | Unique identifier, an automated sequential number is generated every time the DQ_CHECK procedure is run       |                           |
-| SUBJECT_AREA       | Subject area                                                                                                  | Claims, Policy, etc.      |
+| SUBJECT_AREA       | Subject area                                                                                                  |       |
 | DATABASE_NAME      | Database name                                                                                                 |                           |
 | SCHEMA_NAME        | Schema name                                                                                                   |                           |
 | TABLE_NAME         | Table name where the data rule is implemented                                                                 |                           |
