@@ -69,7 +69,7 @@ The table is designed to be the core component of our data quality automation fr
 | CREATED_TIMESTAMP      | Rule creation datetime                                                                                          |                                     |
 | UPDATED_TIMESTAMP      | Rule updated datetime                                                                                           | Not implemented yet (may require stream and task in Snowflake) |
 | DQ_ACTIVE_FG           | Indicates if the rule is active or inactive. `1` - active, `0` - inactive                                       |                                     |
-| RULE_TYPE              | Rule type identifier in DQ stored procedure to process differently, types: 1 or 2.                              | Currently all rule type is 1.       |
+| RULE_TYPE              | Rule type identifier in DQ stored procedure to process differently, types: 1 or 2.                              |      |
 | PII_FLAG               | If the column is PII. In the failed record table, the column value of this rule will be masked|                                     |
 
 
