@@ -1,7 +1,7 @@
-CREATE PROCEDURE PRODUCT.SECURITY.DQ_CHECK
+CREATE OR ALTER PROCEDURE SECURITY.DQ_CHECK
 AS
 BEGIN
-    DECLARE @error_script NVARCHAR(MAX);
+    DECLARE @failed_record_script NVARCHAR(MAX);
     DECLARE @result_script NVARCHAR(MAX);
     DECLARE @DQ_RULE_ID INT;
     DECLARE @DQ_JOB_ID_MAX INT;
@@ -21,63 +21,86 @@ BEGIN
     DECLARE @ROW_COUNT INT;
 
     DECLARE cursor_rule CURSOR FOR
-    SELECT DQ_RULE_ID, SUBJECT_AREA, DATABASE_NAME, SCHEMA_NAME, TABLE_NAME, COLUMN_NAME, PRIMARY_KEY_COLUMN,
-           RULE_DESCRIPTION, RULE_THRESHOLD, RULE_CATEGORY, RULE_SEVERITY, RULE_VALIDATION_SCRIPT
+    SELECT DQ_RULE_ID
+			, SUBJECT_AREA
+			, DATABASE_NAME
+			, SCHEMA_NAME
+			, TABLE_NAME
+			, COLUMN_NAME
+			, PRIMARY_KEY_COLUMN
+			, RULE_DESCRIPTION
+			, RULE_THRESHOLD
+			, RULE_CATEGORY
+			, RULE_SEVERITY
+			, RULE_VALIDATION_SCRIPT
     FROM PRODUCT.SECURITY.DQ_RULE
     WHERE DQ_ACTIVE_FG = 1
     ORDER BY DQ_RULE_ID;
 
     OPEN cursor_rule;
-    FETCH NEXT FROM cursor_rule INTO @DQ_RULE_ID, @SUBJECT_AREA, @DATABASE_NAME, @SCHEMA_NAME, @TABLE_NAME, @COLUMN_NAME, @PRIMARY_KEY_COLUMN,
-                                       @RULE_DESCRIPTION, @RULE_THRESHOLD, @RULE_CATEGORY, @RULE_SEVERITY, @RULE_VALIDATION_SCRIPT;
+    FETCH NEXT FROM cursor_rule INTO @DQ_RULE_ID
+									, @SUBJECT_AREA
+									, @DATABASE_NAME
+									, @SCHEMA_NAME
+									, @TABLE_NAME
+									, @COLUMN_NAME
+									, @PRIMARY_KEY_COLUMN
+									, @RULE_DESCRIPTION
+									, @RULE_THRESHOLD
+									, @RULE_CATEGORY
+									, @RULE_SEVERITY
+									, @RULE_VALIDATION_SCRIPT;
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
+		--Get the new @DQ_JOB_ID_NEW
+		SELECT MAX(DQ_JOB_ID) FROM SECURITY.
+
         -- Splitting the primary key column to get individual column names
-        DECLARE @Columns TABLE (ColumnName NVARCHAR(100));
-        INSERT INTO @Columns
-        SELECT value FROM STRING_SPLIT(@PRIMARY_KEY_COLUMN, ',');
+        --DECLARE @Columns TABLE (ColumnName NVARCHAR(100));
+        --INSERT INTO @Columns
+        --SELECT value FROM STRING_SPLIT(@PRIMARY_KEY_COLUMN, ',');
 
-        DECLARE @ColumnCount INT = (SELECT COUNT(*) FROM @Columns);
-        DECLARE @Counter INT = 1;
-        DECLARE @PrimaryKeyQuery NVARCHAR(MAX) = '';
+        --DECLARE @ColumnCount INT = (SELECT COUNT(*) FROM @Columns);
+        --DECLARE @Counter INT = 1;
+        --DECLARE @PrimaryKeyQuery NVARCHAR(MAX) = '';
 
-        -- Constructing the CONCAT function to concatenate values of primary key columns
-        DECLARE @ColumnName NVARCHAR(100);
-        DECLARE @ColumnValue NVARCHAR(100);
+        ---- Constructing the CONCAT function to concatenate values of primary key columns
+        --DECLARE @ColumnName NVARCHAR(100);
+        --DECLARE @ColumnValue NVARCHAR(100);
 
-        DECLARE ColumnCursor CURSOR FOR
-        SELECT ColumnName FROM @Columns;
+        --DECLARE ColumnCursor CURSOR FOR
+        --SELECT ColumnName FROM @Columns;
 
-        OPEN ColumnCursor;
-        FETCH NEXT FROM ColumnCursor INTO @ColumnName;
+        --OPEN ColumnCursor;
+        --FETCH NEXT FROM ColumnCursor INTO @ColumnName;
 
-        WHILE @@FETCH_STATUS = 0
-        BEGIN
-            SET @ColumnValue = QUOTENAME(@ColumnName);
-            SET @PrimaryKeyQuery = @PrimaryKeyQuery + @ColumnValue;
+        --WHILE @@FETCH_STATUS = 0
+        --BEGIN
+        --    SET @ColumnValue = QUOTENAME(@ColumnName);
+        --    SET @PrimaryKeyQuery = @PrimaryKeyQuery + @ColumnValue;
 
-            IF @Counter < @ColumnCount
-            BEGIN
-                SET @PrimaryKeyQuery = @PrimaryKeyQuery + ', ';
-            END
+        --    IF @Counter < @ColumnCount
+        --    BEGIN
+        --        SET @PrimaryKeyQuery = @PrimaryKeyQuery + ', ';
+        --    END
 
-            FETCH NEXT FROM ColumnCursor INTO @ColumnName;
-            SET @Counter = @Counter + 1;
-        END
+        --    FETCH NEXT FROM ColumnCursor INTO @ColumnName;
+        --    SET @Counter = @Counter + 1;
+        --END
 
-        CLOSE ColumnCursor;
-        DEALLOCATE ColumnCursor;
+        --CLOSE ColumnCursor;
+        --DEALLOCATE ColumnCursor;
 
-        -- Executing the query to get the concatenated primary key value
-        SET @PrimaryKeyQuery = 'SELECT CONCAT(' + @PrimaryKeyQuery + ') AS PRIMARY_KEY_VALUE';
-        EXEC sp_executesql @PrimaryKeyQuery, N'@PrimaryKeyValue NVARCHAR(200) OUTPUT', @PrimaryKeyValue OUTPUT;
+        ---- Executing the query to get the concatenated primary key value
+        --SET @PrimaryKeyQuery = 'SELECT CONCAT(' + @PrimaryKeyQuery + ') AS PRIMARY_KEY_VALUE';
+        --EXEC sp_executesql @PrimaryKeyQuery, N'@PrimaryKeyValue NVARCHAR(200) OUTPUT', @PRIMARY_KEY_VALUE OUTPUT;
 
         -- Assigning the concatenated primary key value to @PRIMARY_KEY_VALUE
-        SET @PRIMARY_KEY_VALUE = @PrimaryKeyValue;
+        --SET @PRIMARY_KEY_VALUE = @PrimaryKeyValue;
 
         -- Constructing error script
-        SET @error_script = 'INSERT INTO PRODUCT.SECURITY.DQ_ERROR (PRIMARY_KEY_NAME, PRIMARY_KEY_VALUE, DO_RULE_ID, DQ_JOB_ID, SUBJECT_AREA, DATABASE_NAME, SCHEMA_NAME, TABLE_NAME, COLUMN_NAME, COLUMN_VALUE, DO_RESULT, RULE_SEVERITY, RULE_DESCRIPTION, AUDIT_TIMESTAMP, PIT_FLAG)
+        SET @failed_record_script = 'INSERT INTO PRODUCT.SECURITY.DQ_FAILED_RECORDS (PRIMARY_KEY_NAME, PRIMARY_KEY_VALUE, DO_RULE_ID, DQ_JOB_ID, SUBJECT_AREA, DATABASE_NAME, SCHEMA_NAME, TABLE_NAME, COLUMN_NAME, COLUMN_VALUE, DO_RESULT, RULE_SEVERITY, RULE_DESCRIPTION, AUDIT_TIMESTAMP, PIT_FLAG)
                              SELECT ''' + @PRIMARY_KEY_COLUMN + ''' AS PRIMARY_KEY_NAME, ''' + @PRIMARY_KEY_VALUE + ''' AS PRIMARY_KEY_VALUE, ' + CAST(@DQ_RULE_ID AS NVARCHAR(10)) + ' AS DO_RULE_ID, ' + CAST(@DQ_JOB_ID_NEW AS NVARCHAR(10)) + ' AS DQ_JOB_ID, ''' + @SUBJECT_AREA + ''' AS SUBJECT_AREA, ''' + @DATABASE_NAME + ''' AS DATABASE_NAME, ''' + @SCHEMA_NAME + ''' AS SCHEMA_NAME, ''' + @TABLE_NAME + ''' AS TABLE_NAME, ''' + @COLUMN_NAME + ''' AS COLUMN_NAME, CONCAT('''', '''') AS COLUMN_VALUE, ''FAIL'' AS DO_RESULT, ''' + @RULE_SEVERITY + ''' AS RULE_SEVERITY, ''' + @RULE_DESCRIPTION + ''' AS RULE_DESCRIPTION, CURRENT_TIMESTAMP AS AUDIT_TIMESTAMP, ''PIT_FLAG'' AS PIT_FLAG
                              FROM ' + @DATABASE_NAME + '.' + @SCHEMA_NAME + '.' + @TABLE_NAME + '
                              WHERE 1=1 AND ' + @RULE_VALIDATION_SCRIPT + ';';
@@ -100,14 +123,23 @@ BEGIN
 
         -- Execute error_script and result_script
         -- After constructing error_script and result_script
-        PRINT 'Error Script: ';
-        PRINT @error_script;
+        PRINT 'Failed records script: ';
+        PRINT @failed_record_script;
+		PRINT @PRIMARY_KEY_COLUMN;
+		PRINT @PRIMARY_KEY_VALUE;
+		PRINT @DQ_RULE_ID;
+		PRINT @DQ_JOB_ID_NEW;
+		PRINT @SUBJECT_AREA;
+		PRINT @DATABASE_NAME;
+		PRINT @SUBJECT_AREA;
+		PRINT @SUBJECT_AREA;
 
-        PRINT 'Result Script: ';
+
+        PRINT 'Result script: ';
         PRINT @result_script;
 
         -- Execute error_script and result_script
-        -- EXECUTE sp_executesql @error_script;
+        -- EXECUTE sp_executesql @failed_record_script;
         -- EXECUTE sp_executesql @result_script;
 
 
@@ -118,3 +150,6 @@ BEGIN
     CLOSE cursor_rule;
     DEALLOCATE cursor_rule;
 END;
+
+
+-- Execute [Security].[DQ_CHECK]
