@@ -5,13 +5,13 @@ INSERT INTO PRODUCT.SECURITY.DQ_RULE (
     TABLE_NAME,
     COLUMN_NAME,
     PRIMARY_KEY_COLUMN,
+    RULE_TYPE,
     RULE_CATEGORY,
     RULE_THRESHOLD,
     RULE_SEVERITY,
     RULE_DESCRIPTION,
     RULE_VALIDATION_SCRIPT,
-    DQ_ACTIVE_FG,
-    RULE_TYPE
+    DQ_ACTIVE_FG
 )
 VALUES (
     'PRODUCT',
@@ -21,10 +21,10 @@ VALUES (
     'ShipRegion',
     'OrderID', -- Assuming OrderID is the primary key
     'DQ1',
-    1, -- Set threshold to 1 since ShipRegion should not be null
+    'CATEGORY1',
+    0, -- Set threshold to 0 since ShipRegion should not be null
     'High',
-    'Check if ShipRegion is not null',
-    'ShipRegion IS NOT NULL', -- Validation script to check if ShipRegion is not null
-    '1', -- Active flag
-    'Data Quality Rule'
+    'ShipRegion should not be null',
+    'ShipRegion IS NULL', -- Validation script to check if ShipRegion is not null
+    '1' -- Active flag
 );
