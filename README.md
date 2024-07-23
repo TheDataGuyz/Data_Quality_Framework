@@ -67,7 +67,7 @@ The table is designed to be the core component of our data quality automation fr
 | RULE_DESCRIPTION       | Detailed description of the rule                                                                                |                                     |
 | RULE_VALIDATION_SCRIPT | For RULE_TYPE = 1, validation script as "where" clause.                                                         | `SELECT * FROM SCHEMA_NAME.TABLE_NAME WHERE (RULE_VALIDATION_SCRIPT)` |
 | CREATED_TIMESTAMP      | Rule creation datetime                                                                                          |                                     |
-| UPDATED_TIMESTAMP      | Rule updated datetime                                                                                           | Not implemented yet (may require stream and task in Snowflake) |
+| UPDATED_TIMESTAMP      | Rule updated datetime                                                                                           |  |
 | DQ_ACTIVE_FG           | Indicates if the rule is active or inactive. `1` - active, `0` - inactive                                       |                                     |
 | RULE_TYPE              | Rule type identifier in DQ stored procedure to process differently, types: 1 or 2.                              |      |
 | PII_FLAG               | If the column is PII. In the failed record table, the column value of this rule will be masked|                                     |
