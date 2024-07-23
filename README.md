@@ -94,7 +94,9 @@ This table captures the outcomes of various data quality checks. It helps track 
 | SCHEMA_NAME         | Schema name                                                                                                    |                                       |
 | TABLE_NAME          | Table name where the data rule is implemented                                                                  |                                       |
 | COLUMN_NAME         | Column name where the data rule is implemented                                                                 |                                       |
-| DQ_RESULT           | Data quality result: `Pass`, `Below Threshold`, or `Fail`                                                      | `Pass`: 100% of records passed; `Below Threshold`: Failed records within threshold percentage; `Fail`: Failed records above threshold percentage. |
+| DQ_RESULT           | Data quality result: `Pass`, `Below Threshold`, or `Fail`                                                      | `Pass`: 100% of records passed;
+`Below Threshold`: Failed records within threshold percentage;
+`Fail`: Failed records above threshold percentage. |
 | RULE_SEVERITY       | Shows the impact of a rule violation and prioritizes the resolution of issues based on their severity.          |                                       |
 | RULE_DESCRIPTION    | Detailed description of the rule                                                                               |                                       |
 | RULE_THRESHOLD      | Determines the maximum allowable percentage of errors before a rule is considered failed.                      |                                       |
