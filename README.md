@@ -94,9 +94,7 @@ This table captures the outcomes of various data quality checks. It helps track 
 | SCHEMA_NAME         | Schema name                                                                                                    |                                       |
 | TABLE_NAME          | Table name where the data rule is implemented                                                                  |                                       |
 | COLUMN_NAME         | Column name where the data rule is implemented                                                                 |                                       |
-| DQ_RESULT           | Data quality result: `Pass`, `Below Threshold`, or `Fail`                                                      | `Pass`: 100% of records passed;
-`Below Threshold`: Failed records within threshold percentage;
-`Fail`: Failed records above threshold percentage. |
+| DQ_RESULT           | Data quality result: `Pass`, `Below Threshold`, or `Fail`                                                      | `Pass`: 100% of records passed; `Below Threshold`: Failed records within threshold percentage; `Fail`: Failed records above threshold percentage. |
 | RULE_SEVERITY       | Shows the impact of a rule violation and prioritizes the resolution of issues based on their severity.          |                                       |
 | RULE_DESCRIPTION    | Detailed description of the rule                                                                               |                                       |
 | RULE_THRESHOLD      | Determines the maximum allowable percentage of errors before a rule is considered failed.                      |                                       |
@@ -171,7 +169,7 @@ This table stores detailed information about errors (e.g., SQL compilation) enco
 | Column Name    | Column Description                                                                                           | Comment                         |
 |----------------|-----------------------------------------------------------------------------------------------------------|---------------------------------|
 | DQ_JOB_ID      | Unique identifier, an automated sequential number is generated every time the DQ_CHECK procedure is run    | Foreign Key                     |
-| ERR_D_RULE_ID  | Unique identifier of the DQ rule ID which has an error and failed to be executed                            |                                 |
+| ERR_RULE_ID  | Unique identifier of the DQ rule ID which has an error and failed to be executed                            |                                 |
 | ERR_MESSAGE    | System message with error code and error message                                                           |                                 |
 | DQ_RUN_TIMESTAMP| DQ run timestamp when it executes the current data quality rule                                            |                                 |
 
@@ -186,10 +184,6 @@ The stored procedure is the cornerstone of the data quality automation framework
 - Tracks the status of each run and captures relevant error details for quick identification and resolution of issues.
 - Captures summarized results in DQ_RESULT for a quick snapshot view for management.
 
----
-
-*Note: Some features such as `UPDATED_TIMESTAMP` and `PII_FLAG` are not yet implemented.*
-
 
 ## 4. Maintenance
 
@@ -197,6 +191,6 @@ The stored procedure is the cornerstone of the data quality automation framework
 - Monitor and optimize the performance of data quality checks to ensure timely execution.
 - Periodically review and clean up historical data in the `DQ_FAILED_RECORDS` tables to manage storage resources.
 
-## 54. Conclusion
+## 5. Conclusion
 
 The Data Quality Automation Framework, coupled with the Data Quality Dashboard, plays a critical role in maintaining the quality and integrity of our organization's data. By defining, executing, and monitoring data quality rules and metrics, we ensure that our data remains accurate, consistent, and reliable for decision-making processes.
