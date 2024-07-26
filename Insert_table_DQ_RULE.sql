@@ -5,6 +5,7 @@ INSERT INTO PRODUCT.SECURITY.DQ_RULE (
     TABLE_NAME,
     COLUMN_NAME,
     PRIMARY_KEY_COLUMN,
+	PII_FLAG,
     RULE_TYPE,
     RULE_CATEGORY,
     RULE_THRESHOLD,
@@ -19,7 +20,8 @@ VALUES (
     'dbo',
     'Orders',
     'ShipRegion',
-    'OrderID', -- Assuming OrderID is the primary key
+    'OrderID', -- OrderID is the primary key
+	'N',
     'DQ1',
     'CATEGORY1',
     0, -- Set threshold to 0 since ShipRegion should not be null
