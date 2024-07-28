@@ -72,8 +72,16 @@ BEGIN
                 SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_ERROR_HANDLE_LOG
             ) AS combined
         );
+		IF CHARINDEX(',', @PRIMARY_KEY_COLUMN) > 0
+		BEGIN
+			SET @PRIMARY_KEY_COLUMN = 'CONCAT(' + @PRIMARY_KEY_COLUMN + ')';
+		END
+		IF CHARINDEX(',', @COLUMN_NAME) > 0
+		BEGIN
+			SET @COLUMN_NAME = 'CONCAT(' + @COLUMN_NAME + ')';
+		END
 
-
+		
         SET @failed_record_script = 'INSERT INTO PRODUCT.SECURITY.DQ_FAILED_RECORDS (
 													PRIMARY_KEY_NAME
 													, PRIMARY_KEY_VALUE
@@ -157,6 +165,7 @@ BEGIN
 		END TRY  
 		BEGIN CATCH
 		-- Constructing error script
+			PRINT @failed_record_script;
 			 INSERT INTO PRODUCT.[Security].[DQ_ERROR_HANDLE_LOG] (
 							[DQ_JOB_ID]
 							,[ERR_DQ_RULE_ID]
