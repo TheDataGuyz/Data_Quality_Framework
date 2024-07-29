@@ -11,7 +11,9 @@ BEGIN
     DECLARE @SCHEMA_NAME NVARCHAR(100);
     DECLARE @TABLE_NAME NVARCHAR(100);
     DECLARE @COLUMN_NAME NVARCHAR(100);
+	DECLARE @COLUMN_VALUE NVARCHAR(100);
     DECLARE @PRIMARY_KEY_COLUMN NVARCHAR(200); -- Adjust the size as needed
+	DECLARE @PRIMARY_KEY_VALUE NVARCHAR(200);
     DECLARE @RULE_DESCRIPTION NVARCHAR(500);
 	DECLARE @RULE_TYPE NVARCHAR(100);
     DECLARE @RULE_THRESHOLD FLOAT;
@@ -41,6 +43,20 @@ BEGIN
     WHERE DQ_ACTIVE_FG = 1
     ORDER BY DQ_RULE_ID;
 
+	--Get the new @DQ_JOB_ID_NEW
+	SET @DQ_JOB_ID_NEW = (
+            SELECT COALESCE(MAX(DQ_JOB_ID),0) + 1
+            FROM (
+                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_RESULT
+                UNION ALL
+                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_FAILED_RECORDS
+                UNION ALL
+                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_RUN_STATUS
+                UNION ALL
+                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_ERROR_HANDLE_LOG
+            ) AS combined
+        );
+
     OPEN cursor_rule;
     FETCH NEXT FROM cursor_rule INTO @DQ_RULE_ID
 									, @SUBJECT_AREA
@@ -59,27 +75,24 @@ BEGIN
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-		--Get the new @DQ_JOB_ID_NEW
-        SET @DQ_JOB_ID_NEW = (
-            SELECT COALESCE(MAX(DQ_JOB_ID),0) + 1
-            FROM (
-                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_RESULT
-                UNION ALL
-                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_FAILED_RECORDS
-                UNION ALL
-                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_RUN_STATUS
-                UNION ALL
-                SELECT DQ_JOB_ID FROM PRODUCT.SECURITY.DQ_ERROR_HANDLE_LOG
-            ) AS combined
-        );
+		--HANDLE MUTIPLE COLUMNS AND KEYS
 		IF CHARINDEX(',', @PRIMARY_KEY_COLUMN) > 0
-		BEGIN
-			SET @PRIMARY_KEY_COLUMN = 'CONCAT(' + @PRIMARY_KEY_COLUMN + ')';
-		END
+			BEGIN
+				SET @PRIMARY_KEY_VALUE = 'CONCAT(' + @PRIMARY_KEY_COLUMN + ')';
+			END
+		ELSE
+			BEGIN
+			SET @PRIMARY_KEY_VALUE = @PRIMARY_KEY_COLUMN;
+			END;
+
 		IF CHARINDEX(',', @COLUMN_NAME) > 0
-		BEGIN
-			SET @COLUMN_NAME = 'CONCAT(' + @COLUMN_NAME + ')';
-		END
+			BEGIN
+				SET @COLUMN_VALUE = 'CONCAT(' + @COLUMN_NAME + ')';
+			END
+		ELSE
+			BEGIN
+				SET @COLUMN_VALUE = @COLUMN_NAME;
+			END;
 
 		
         SET @failed_record_script = 'INSERT INTO PRODUCT.SECURITY.DQ_FAILED_RECORDS (
@@ -99,7 +112,7 @@ BEGIN
 													, DQ_RUN_TIMESTAMP)
 									SELECT 
 									''' + @PRIMARY_KEY_COLUMN + ''' AS PRIMARY_KEY_NAME, 
-									' + @PRIMARY_KEY_COLUMN + ', 
+									' + @PRIMARY_KEY_VALUE + ' AS PRIMARY_KEY_VALUE, 
 									' + CAST(@DQ_RULE_ID AS NVARCHAR(100)) + ' AS DQ_RULE_ID, 
 									' + CAST(@DQ_JOB_ID_NEW AS NVARCHAR(100)) + ' AS DQ_JOB_ID, 
 									''' + @SUBJECT_AREA + ''' AS SUBJECT_AREA, 
@@ -107,7 +120,7 @@ BEGIN
 									''' + @SCHEMA_NAME + ''' AS SCHEMA_NAME, 
 									''' + @TABLE_NAME + ''' AS TABLE_NAME, 
 									''' + @COLUMN_NAME + ''' AS COLUMN_NAME, 
-									' + @COLUMN_NAME + ', 
+									' + @COLUMN_VALUE + ' AS COLUMN_VALUE, 
 									''FAIL'' AS DQ_RESULT, 
 									''' + @RULE_SEVERITY + ''' AS RULE_SEVERITY, 
 									''' + @RULE_DESCRIPTION + ''' AS RULE_DESCRIPTION, 
@@ -162,10 +175,11 @@ BEGIN
 		-- Execute error_script and result_script
 			EXECUTE sp_executesql @failed_record_script;
 			EXECUTE sp_executesql @result_script;
+			--PRINT @COLUMN_VALUE;
+			--PRINT @failed_record_script;
 		END TRY  
 		BEGIN CATCH
 		-- Constructing error script
-			PRINT @failed_record_script;
 			 INSERT INTO PRODUCT.[Security].[DQ_ERROR_HANDLE_LOG] (
 							[DQ_JOB_ID]
 							,[ERR_DQ_RULE_ID]
